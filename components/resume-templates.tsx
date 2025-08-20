@@ -4152,38 +4152,132 @@ export function TailorTemplate({
   return <MasterTailorTemplate data={data} language={language} />
 }
 
+// function MasterTailorTemplate({ data, language }: { data: ResumeData; language: Language }) {
+//   return (
+//     <div className="p-8">
+//       <div className="text-center mb-6 border-b-2 border-purple-500 pb-4">
+//         <h2 className="text-3xl font-bold text-gray-800">{data.personalInfo.name}</h2>
+//         <p className="text-xl text-purple-600">{data.personalInfo.title}</p>
+//         <p className="text-sm text-gray-600 mt-2">{data.personalInfo.location}</p>
+//       </div>
+
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//         <div>
+//           <h3 className="text-lg font-semibold mb-3 text-purple-600">
+//             {getTranslation("resumeContent.aboutMe", language)}
+//           </h3>
+//           <p className="text-sm mb-6">{data.summary}</p>
+
+//           <h3 className="text-lg font-semibold mb-3 text-purple-600">
+//             {getTranslation("sections.experience", language)}
+//           </h3>
+//           {data.experience.map((exp: any, index: number) => (
+//             <div key={index} className="mb-4 bg-purple-50 p-4 rounded">
+//               <p className="font-medium">{exp.title}</p>
+//               <p className="text-sm font-medium text-purple-600">{exp.company}</p>
+//               <p className="text-sm text-gray-500">
+//                 {exp.dates} • {exp.location}
+//               </p>
+//               <p className="text-sm mt-2">{exp.description}</p>
+//             </div>
+//           ))}
+//         </div>
+
+//         <div>
+//           <div className="mb-6">
+//             <h3 className="text-lg font-semibold mb-3 text-purple-600">
+//               {getTranslation("resumeContent.contactInformation", language)}
+//             </h3>
+//             <div className="bg-gray-50 p-4 rounded">
+//               <p className="text-sm mb-1">{data.personalInfo.email}</p>
+//               <p className="text-sm mb-1">{data.personalInfo.phone}</p>
+//             </div>
+//           </div>
+
+//           {data.specializations && (
+//             <div className="mb-6">
+//               <h3 className="text-lg font-semibold mb-3 text-purple-600">
+//                 {getTranslation("resumeContent.specializations", language)}
+//               </h3>
+//               <div className="grid grid-cols-2 gap-2">
+//                 {data.specializations.map((spec: string, index: number) => (
+//                   <span key={index} className="bg-purple-100 text-purple-800 px-3 py-2 rounded text-sm text-center">
+//                     {spec}
+//                   </span>
+//                 ))}
+//               </div>
+//             </div>
+//           )}
+
+//           <div>
+//             <h3 className="text-lg font-semibold mb-3 text-purple-600">
+//               {getTranslation("sections.skills", language)}
+//             </h3>
+//             <div className="flex flex-wrap gap-2">
+//               {data.skills.map((skill: string, index: number) => (
+//                 <span key={index} className="bg-purple-200 text-purple-800 px-2 py-1 rounded text-sm">
+//                   {skill}
+//                 </span>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
 function MasterTailorTemplate({ data, language }: { data: ResumeData; language: Language }) {
   return (
     <div className="p-8">
+      {/* Header */}
       <div className="text-center mb-6 border-b-2 border-purple-500 pb-4">
         <h2 className="text-3xl font-bold text-gray-800">{data.personalInfo.name}</h2>
-        <p className="text-xl text-purple-600">{data.personalInfo.title}</p>
+        <p className="text-xl text-purple-600">{data.personalInfo.title || "Master Tailor"}</p>
         <p className="text-sm text-gray-600 mt-2">{data.personalInfo.location}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Left Column */}
         <div>
+          {/* About Me */}
           <h3 className="text-lg font-semibold mb-3 text-purple-600">
             {getTranslation("resumeContent.aboutMe", language)}
           </h3>
-          <p className="text-sm mb-6">{data.summary}</p>
+          <p className="text-sm mb-6">{data.summary || "Experienced tailor specializing in bespoke suits, custom dresses, and professional alterations with over 10 years of craftsmanship."}</p>
 
+          {/* Experience */}
           <h3 className="text-lg font-semibold mb-3 text-purple-600">
             {getTranslation("sections.experience", language)}
           </h3>
           {data.experience.map((exp: any, index: number) => (
             <div key={index} className="mb-4 bg-purple-50 p-4 rounded">
-              <p className="font-medium">{exp.title}</p>
-              <p className="text-sm font-medium text-purple-600">{exp.company}</p>
+              <p className="font-medium">{exp.title || "Head Tailor"}</p>
+              <p className="text-sm font-medium text-purple-600">{exp.company || "FineStitch Boutique"}</p>
               <p className="text-sm text-gray-500">
-                {exp.dates} • {exp.location}
+                {exp.dates || "2018 – Present"} • {exp.location || "Mumbai, India"}
               </p>
-              <p className="text-sm mt-2">{exp.description}</p>
+              <p className="text-sm mt-2">{exp.description || "Design and craft custom garments, manage alterations team, and ensure client satisfaction."}</p>
             </div>
           ))}
+
+          {/* Certifications (if present) */}
+          {data.certifications && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-3 text-purple-600">
+                {getTranslation("resumeContent.certifications", language)}
+              </h3>
+              <ul className="list-disc pl-5 text-sm">
+                {data.certifications.map((cert: string, index: number) => (
+                  <li key={index}>{cert}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
+        {/* Right Column */}
         <div>
+          {/* Contact Information */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-3 text-purple-600">
               {getTranslation("resumeContent.contactInformation", language)}
@@ -4194,10 +4288,11 @@ function MasterTailorTemplate({ data, language }: { data: ResumeData; language: 
             </div>
           </div>
 
+          {/* Specializations (like garment types or services) */}
           {data.specializations && (
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3 text-purple-600">
-                {getTranslation("resumeContent.specializations", language)}
+                {getTranslation("resumeContent.services", language) || "Specializations"}
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 {data.specializations.map((spec: string, index: number) => (
@@ -4209,6 +4304,7 @@ function MasterTailorTemplate({ data, language }: { data: ResumeData; language: 
             </div>
           )}
 
+          {/* Skills */}
           <div>
             <h3 className="text-lg font-semibold mb-3 text-purple-600">
               {getTranslation("sections.skills", language)}
@@ -4224,8 +4320,9 @@ function MasterTailorTemplate({ data, language }: { data: ResumeData; language: 
         </div>
       </div>
     </div>
-  )
+  );
 }
+
 
 export function CookChefTemplate({
   variant = "1",
