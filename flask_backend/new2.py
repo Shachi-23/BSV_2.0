@@ -3598,44 +3598,82 @@ def check_auth():
     current_user_id = get_jwt_identity()
     return jsonify({'authenticated': True, 'user_id': current_user_id}), 200
 
+# def create_profession_specific_prompt(transcript, profession, language):
+#     """Create a profession-specific prompt for OpenRouter API"""
+    
+#     profession_templates = {
+#         "driver": {
+#             "focus_areas": ["driving experience", "vehicle types", "safety record", "routes knowledge", "customer service", ,"age"],
+#             "suggestions": ["Commercial driving license details", "Years of driving experience", "Types of vehicles driven", "Safety certifications", "Route familiarity", "Customer service skills"]
+#         },
+#         "delivery": {
+#             "focus_areas": ["delivery experience", "logistics", "time management", "customer interaction", "vehicle handling" ,"age"],
+#             "suggestions": ["Delivery platforms worked with", "Average deliveries per day", "Customer ratings", "Time management skills", "Navigation skills", "Physical fitness"]
+#         },
+#         "electrician": {
+#             "focus_areas": ["electrical work experience", "certifications", "safety protocols", "technical skills", "problem-solving" ,"age"],
+#             "suggestions": ["Electrical certifications", "Types of electrical work", "Safety training", "Tool proficiency", "Troubleshooting experience", "Emergency response skills"]
+#         },
+#         "tailor": {
+#             "focus_areas": ["sewing experience", "garment types", "alterations", "customer service", "design skills" ,"age"],
+#             "suggestions": ["Types of garments specialized in", "Alteration experience", "Sewing machine proficiency", "Design capabilities", "Customer portfolio", "Fabric knowledge"]
+#         },
+#         "cook": {
+#             "focus_areas": ["cooking experience", "cuisine types", "kitchen management", "food safety", "customer service" ,"age"],
+#             "suggestions": ["Cuisine specializations", "Kitchen equipment proficiency", "Food safety certifications", "Menu planning", "Inventory management", "Customer service experience"]
+#         },
+#         "security": {
+#             "focus_areas": ["security experience", "surveillance", "emergency response", "customer service", "physical fitness" ,"age"],
+#             "suggestions": ["Security certifications", "Surveillance experience", "Emergency response training", "Physical fitness level", "Communication skills", "Conflict resolution"]
+#         },
+#         "sales": {
+#             "focus_areas": ["sales experience", "customer service", "product knowledge", "communication", "target achievement" ,"age"],
+#             "suggestions": ["Sales targets achieved", "Product categories handled", "Customer service skills", "Communication abilities", "POS system experience", "Inventory management"]
+#         },
+#         "mechanic": {
+#             "focus_areas": ["mechanical experience", "vehicle types", "diagnostic skills", "tool proficiency", "problem-solving" ,"age"],
+#             "suggestions": ["Vehicle types serviced", "Diagnostic equipment experience", "Tool proficiency", "Certification details", "Problem-solving examples", "Customer service skills"]
+#         }
+#     }
+    
 def create_profession_specific_prompt(transcript, profession, language):
     """Create a profession-specific prompt for OpenRouter API"""
     
     profession_templates = {
         "driver": {
-            "focus_areas": ["driving experience", "vehicle types", "safety record", "routes knowledge", "customer service"],
+            "focus_areas": ["driving experience", "vehicle types", "safety record", "routes knowledge", "customer service", "age"],
             "suggestions": ["Commercial driving license details", "Years of driving experience", "Types of vehicles driven", "Safety certifications", "Route familiarity", "Customer service skills"]
         },
         "delivery": {
-            "focus_areas": ["delivery experience", "logistics", "time management", "customer interaction", "vehicle handling"],
+            "focus_areas": ["delivery experience", "logistics", "time management", "customer interaction", "vehicle handling", "age"],
             "suggestions": ["Delivery platforms worked with", "Average deliveries per day", "Customer ratings", "Time management skills", "Navigation skills", "Physical fitness"]
         },
         "electrician": {
-            "focus_areas": ["electrical work experience", "certifications", "safety protocols", "technical skills", "problem-solving"],
+            "focus_areas": ["electrical work experience", "certifications", "safety protocols", "technical skills", "problem-solving", "age"],
             "suggestions": ["Electrical certifications", "Types of electrical work", "Safety training", "Tool proficiency", "Troubleshooting experience", "Emergency response skills"]
         },
         "tailor": {
-            "focus_areas": ["sewing experience", "garment types", "alterations", "customer service", "design skills"],
+            "focus_areas": ["sewing experience", "garment types", "alterations", "customer service", "design skills", "age"],
             "suggestions": ["Types of garments specialized in", "Alteration experience", "Sewing machine proficiency", "Design capabilities", "Customer portfolio", "Fabric knowledge"]
         },
         "cook": {
-            "focus_areas": ["cooking experience", "cuisine types", "kitchen management", "food safety", "customer service"],
+            "focus_areas": ["cooking experience", "cuisine types", "kitchen management", "food safety", "customer service", "age"],
             "suggestions": ["Cuisine specializations", "Kitchen equipment proficiency", "Food safety certifications", "Menu planning", "Inventory management", "Customer service experience"]
         },
         "security": {
-            "focus_areas": ["security experience", "surveillance", "emergency response", "customer service", "physical fitness"],
+            "focus_areas": ["security experience", "surveillance", "emergency response", "customer service", "physical fitness", "age"],
             "suggestions": ["Security certifications", "Surveillance experience", "Emergency response training", "Physical fitness level", "Communication skills", "Conflict resolution"]
         },
         "sales": {
-            "focus_areas": ["sales experience", "customer service", "product knowledge", "communication", "target achievement"],
+            "focus_areas": ["sales experience", "customer service", "product knowledge", "communication", "target achievement", "age"],
             "suggestions": ["Sales targets achieved", "Product categories handled", "Customer service skills", "Communication abilities", "POS system experience", "Inventory management"]
         },
         "mechanic": {
-            "focus_areas": ["mechanical experience", "vehicle types", "diagnostic skills", "tool proficiency", "problem-solving"],
+            "focus_areas": ["mechanical experience", "vehicle types", "diagnostic skills", "tool proficiency", "problem-solving", "age"],
             "suggestions": ["Vehicle types serviced", "Diagnostic equipment experience", "Tool proficiency", "Certification details", "Problem-solving examples", "Customer service skills"]
         }
     }
-    
+
     template = profession_templates.get(profession, profession_templates["driver"])
     
     prompt = f"""
