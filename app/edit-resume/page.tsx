@@ -9,6 +9,7 @@ import { toast } from "@/components/ui/use-toast"
 import { Loader2, Plus, X, Save } from "lucide-react"
 
 export default function EditResumePage() {
+  
   const router = useRouter()
   const searchParams = useSearchParams()
   const resumeId = searchParams.get("id")
@@ -18,52 +19,94 @@ export default function EditResumePage() {
   const [resumeData, setResumeData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  // const [formData, setFormData] = useState<ResumeData | null>(null)
+
+  // useEffect(() => {
+  //   const storedData = localStorage.getItem("resumeDataForEdit")
+  //   if (storedData) {
+  //     setResumeData(JSON.parse(storedData))
+  //   }
+  // }, [])
+  
+  // useEffect(() => {
+  //   // Load resume data
+  //   const loadResumeData = async () => {
+  //     try {
+  //       if (resumeId) {
+  //         // If we have a resumeId, fetch from API
+  //         try {
+  //           const response = await fetch(`http://localhost:5000/api/resume/${resumeId}`, {
+  //             credentials: "include",
+  //           })
+  //           if (response.ok) {
+  //             const data = await response.json()
+  //             console.log("resume data is" ,data);
+  //             setResumeData(ensureResumeStructure(data))
+  //           } else {
+  //             throw new Error("Failed to load resume data from API")
+  //           }
+  //         } catch (error) {
+  //           console.error("API fetch error:", error)
+  //           // Fall back to localStorage if API fails
+  //           const storedData = localStorage.getItem("resumeData")
+  //           if (storedData) {
+  //             handleStoredData(storedData)
+  //           } else {
+  //             setResumeData(getEmptyResumeData())
+  //           }
+  //         }
+  //       } else {
+  //         // No resumeId, try localStorage
+  //         const storedData = localStorage.getItem("resumeData")
+  //         if (storedData) {
+  //           handleStoredData(storedData)
+  //         } else {
+  //           setResumeData(getEmptyResumeData())
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error loading resume data:", error)
+  //       setResumeData(getEmptyResumeData())
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
+
+  //   loadResumeData()
+  // }, [resumeId])
+
 
   useEffect(() => {
-    // Load resume data
-    const loadResumeData = async () => {
-      try {
-        if (resumeId) {
-          // If we have a resumeId, fetch from API
-          try {
-            const response = await fetch(`http://localhost:5000/api/resume/${resumeId}`, {
-              credentials: "include",
-            })
-            if (response.ok) {
-              const data = await response.json()
-              setResumeData(ensureResumeStructure(data))
-            } else {
-              throw new Error("Failed to load resume data from API")
-            }
-          } catch (error) {
-            console.error("API fetch error:", error)
-            // Fall back to localStorage if API fails
-            const storedData = localStorage.getItem("resumeData")
-            if (storedData) {
-              handleStoredData(storedData)
-            } else {
-              setResumeData(getEmptyResumeData())
-            }
-          }
-        } else {
-          // No resumeId, try localStorage
-          const storedData = localStorage.getItem("resumeData")
-          if (storedData) {
-            handleStoredData(storedData)
-          } else {
-            setResumeData(getEmptyResumeData())
-          }
-        }
-      } catch (error) {
-        console.error("Error loading resume data:", error)
-        setResumeData(getEmptyResumeData())
-      } finally {
-        setIsLoading(false)
-      }
-    }
+  // Try to load from resumeDataForEdit first
+  const storedEditData = localStorage.getItem("resumeDataForEdit")
+  if (storedEditData) {
+    setResumeData(ensureResumeStructure(JSON.parse(storedEditData)))
+    setIsLoading(false)
+    return
+  }
 
-    loadResumeData()
-  }, [resumeId])
+  // Fallback to API/localStorage logic
+  const loadResumeData = async () => {
+    try {
+      if (resumeId) {
+        // ...existing API logic...
+      } else {
+        const storedData = localStorage.getItem("resumeData")
+        if (storedData) {
+          handleStoredData(storedData)
+        } else {
+          setResumeData(getEmptyResumeData())
+        }
+      }
+    } catch (error) {
+      setResumeData(getEmptyResumeData())
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  loadResumeData()
+}, [resumeId])
 
   const handleStoredData = (storedData: string) => {
     try {

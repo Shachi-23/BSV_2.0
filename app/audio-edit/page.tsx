@@ -95,53 +95,75 @@ export default function AudioEditPage() {
     }
   }, [isRecording])
 
+  
   const loadResumeData = async () => {
-    try {
-      let data: ResumeData | null = null
+  try {
+    let data: ResumeData | null = null
 
-      if (resumeId) {
-        // Load from API
-        const response = await fetch(`http://localhost:5000/api/resume/${resumeId}`, {
-          credentials: "include",
-        })
-        if (response.ok) {
-          data = await response.json()
-        }
+    if (resumeId) {
+      // Load from API
+      const response = await fetch(`http://localhost:5000/api/resume/${resumeId}`, {
+        credentials: "include",
+      })
+      if (response.ok) {
+        data = await response.json()
       } else {
-        // Load from localStorage
+        // Fallback to localStorage if API fails
         const storedData = localStorage.getItem("resumeDataForEdit") || localStorage.getItem("resumeData")
         if (storedData) {
           const parsedData = JSON.parse(storedData)
           data = parsedData.data ? parsedData.data : parsedData
         }
       }
-
-      if (data) {
-        // Ensure skills is an array
-        if (typeof data.skills === "string") {
-          data.skills = (data.skills as string).split(",").map((s) => s.trim())
-        }
-        setResumeData(data)
-        setOriginalData(JSON.parse(JSON.stringify(data))) // Deep copy
-      } else {
-        toast({
-          title: "Error",
-          description: "Could not load resume data",
-          variant: "destructive",
-        })
-        router.push("/templates")
+    } else {
+      // Load from localStorage
+      const storedData = localStorage.getItem("resumeDataForEdit") || localStorage.getItem("resumeData")
+      if (storedData) {
+        const parsedData = JSON.parse(storedData)
+        data = parsedData.data ? parsedData.data : parsedData
       }
-    } catch (error) {
-      console.error("Error loading resume data:", error)
+    }
+
+    if (data) {
+      // Ensure skills is an array
+      if (typeof data.skills === "string") {
+        data.skills = (data.skills as string).split(",").map((s) => s.trim())
+      }
+      setResumeData(data)
+      setOriginalData(JSON.parse(JSON.stringify(data))) // Deep copy
+    } else {
       toast({
         title: "Error",
-        description: "Failed to load resume data",
+        description: "Could not load resume data",
         variant: "destructive",
       })
-    } finally {
-      setIsLoading(false)
+      router.push("/templates")
     }
+  } catch (error) {
+    console.error("Error loading resume data:", error)
+    toast({
+      title: "Error",
+      description: "Failed to load resume data",
+      variant: "destructive",
+    })
+    // Fallback to localStorage if fetch throws
+    const storedData = localStorage.getItem("resumeDataForEdit") || localStorage.getItem("resumeData")
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData)
+        const data = parsedData.data ? parsedData.data : parsedData
+        setResumeData(data)
+        setOriginalData(JSON.parse(JSON.stringify(data)))
+      } catch (e) {
+        setResumeData(null)
+      }
+    } else {
+      setResumeData(null)
+    }
+  } finally {
+    setIsLoading(false)
   }
+}
 
   const startRecording = async () => {
     try {
@@ -194,62 +216,126 @@ export default function AudioEditPage() {
     }
   }
 
+  // const processAudioEdit = async () => {
+  //   if (!audioBlob || !resumeData) return
+
+  //   setIsProcessing(true)
+
+  //   try {
+  //     const formData = new FormData()
+  //     formData.append("audio", audioBlob, "edit_command.wav")
+  //     formData.append("resumeData", JSON.stringify(resumeData))
+  //     formData.append("language", "en")
+
+  //     const response = await fetch("http://localhost:5000/api/process-audio-edit", {
+  //       method: "POST",
+  //       body: formData,
+  //       credentials: "include",
+  //     })
+
+  //     if (response.ok) {
+  //       const result = await response.json()
+
+  //       // Ensure skills is an array after processing
+  //       if (result.updatedData && typeof result.updatedData.skills === "string") {
+  //         result.updatedData.skills = (result.updatedData.skills as string)
+  //           .split(",")
+  //           .map((s: string) => s.trim())
+  //           .filter((s: string) => s.length > 0)
+  //       }
+
+  //       setResumeData(result.updatedData)
+  //       setChanges(result.changes || [])
+  //       setTranscript(result.transcript || "")
+  //       setShowChanges(true)
+
+  //       toast({
+  //         title: "Success",
+  //         description: "Audio processed successfully! Review the changes below.",
+  //       })
+  //     } else {
+  //       const error = await response.json()
+  //       toast({
+  //         title: "Error",
+  //         description: error.message || "Failed to process audio",
+  //         variant: "destructive",
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.error("Error processing audio:", error)
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to process audio edit",
+  //       variant: "destructive",
+  //     })
+  //   } finally {
+  //     setIsProcessing(false)
+  //   }
+  // }
+
   const processAudioEdit = async () => {
-    if (!audioBlob || !resumeData) return
+  if (!audioBlob || !resumeData) return
 
-    setIsProcessing(true)
+  setIsProcessing(true)
 
-    try {
-      const formData = new FormData()
-      formData.append("audio", audioBlob, "edit_command.wav")
-      formData.append("resumeData", JSON.stringify(resumeData))
-      formData.append("language", "en")
+  try {
+    const formData = new FormData()
+    formData.append("audio", audioBlob, "edit_command.wav")
+    formData.append("resumeData", JSON.stringify(resumeData))
+    formData.append("language", "en")
 
-      const response = await fetch("http://localhost:5000/api/process-audio-edit", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      })
+    const response = await fetch("http://localhost:5000/api/process-audio-edit", {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    })
 
-      if (response.ok) {
-        const result = await response.json()
+    if (response.ok) {
+      const result = await response.json()
 
-        // Ensure skills is an array after processing
-        if (result.updatedData && typeof result.updatedData.skills === "string") {
-          result.updatedData.skills = (result.updatedData.skills as string)
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter((s: string) => s.length > 0)
-        }
-
-        setResumeData(result.updatedData)
-        setChanges(result.changes || [])
-        setTranscript(result.transcript || "")
-        setShowChanges(true)
-
-        toast({
-          title: "Success",
-          description: "Audio processed successfully! Review the changes below.",
-        })
-      } else {
-        const error = await response.json()
-        toast({
-          title: "Error",
-          description: error.message || "Failed to process audio",
-          variant: "destructive",
-        })
+      // Ensure skills is an array after processing
+      if (result.updatedData && typeof result.updatedData.skills === "string") {
+        result.updatedData.skills = (result.updatedData.skills as string)
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter((s: string) => s.length > 0)
       }
-    } catch (error) {
-      console.error("Error processing audio:", error)
+
+      setResumeData(result.updatedData)
+      setChanges(result.changes || [])
+      setTranscript(result.transcript || "")
+      setShowChanges(true)
+
+      toast({
+        title: "Success",
+        description: "Audio processed successfully! Review the changes below.",
+      })
+    } else {
+      // Read the body once as text
+      const errorText = await response.text()
+      let errorMessage = "Failed to process audio"
+      if (errorText.startsWith("<!doctype")) {
+        errorMessage = "Server error: Could not process audio. Please check your backend."
+      } else {
+        errorMessage = errorText
+      }
       toast({
         title: "Error",
-        description: "Failed to process audio edit",
+        description: errorMessage,
         variant: "destructive",
       })
-    } finally {
-      setIsProcessing(false)
     }
+  } catch (error) {
+    console.error("Error processing audio:", error)
+    toast({
+      title: "Error",
+      description: "Failed to process audio edit",
+      variant: "destructive",
+    })
+  } finally {
+    setIsProcessing(false)
   }
+}
 
   const acceptChanges = async () => {
     if (!resumeData) return
